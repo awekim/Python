@@ -1,0 +1,122 @@
+#######################################################################
+##  Made by: Keungoui Kim (Ph.D.) 
+##  Title: Sample codes for using pytrends
+##  goal: Introduce how to use pytrends
+#######################################################################
+
+# This is sample code using pytrends
+# pytrends allows you to pull the Google trends result to python.
+# Google trend is a powerful tool for analyzing the web-based trends. 
+# Instead of pulling everything from the website, this package enables better condition for analysis.
+# I strongly recommend you to open Google Trends and compare the python codes. 
+# Especially for the python beginners, this will help you to follow what it means.
+
+################################################
+# Preparation: load pacakges
+################################################
+from pytrends.request import TrendReq
+import csv
+import pandas as pd
+
+################################################
+# 1. Basic settings
+################################################
+pytrends = TrendReq(hl="ko", tz=540)
+# hl: host language, ex) en-US, ko 
+# tx: timezone, ex) 540: korea, 360: us
+
+################################################
+# 2. Search option settings
+################################################
+# keyword setting (maximum 5)
+kw_list = ["COVID"] 
+
+# Setting categories... '0' indicates all
+category_list = '0'
+
+# Setting time frame
+# You have many options: 'today 5-y', 'today 12-m', 'today 3-m', 'today 1-m'
+time_frame = ['2019-03-12 2021-03-12'] # 'today 5-y', 'today 12-m', 'today 3-m', 'today 1-m'
+
+# Setting country
+# One of the beauty of Google trends is that 
+geo_list = 'KR'
+
+pytrends.build_payload(kw_list,
+                       cat=category_list,
+                       timeframe=time_frame[0],
+                       geo=geo_list,
+                       gprop='')
+
+# Get the Related Topics (only one keyword)
+data_topics = pytrends.related_topics()
+print(data_topics)
+
+# Interest over time
+data = pytrends.interest_over_time()
+image = data.plot(title = 'Google Trends')
+# fig = image.get_figure()
+
+# Get the Related Queries
+data_queries = pytrends.related_queries()
+print(data_queries)
+
+# Interest By Region
+data_region = pytrends.interest_by_region()
+data_region
+
+# Get Google Keyword Suggestion
+data_suggestions_dict = pytrends.suggestions(keyword='대마초')
+pd.DataFrame(data_suggestions_dict).drop('mid', axis=1)
+
+# Get Trending searches (in last few days)
+pytrends.trending_searches(pn='south_korea')
+
+# Get the Google Daily Trends
+pytrends.today_searches(pn="KR")
+
+# Get Google Top Charts
+pytrends.top_charts(2020, hl='en-US', tz=300, geo='KR')
+pytrends.top_charts(2020, hl='en-US', tz=300, geo='US')
+pytrends.top_charts(2020, hl='en-US', tz=300, geo='GB')
+
+#
+pytrends.build_payload(kw_list=['coronavirus'])
+
+
+
+
+#####
+# BITCOIN과 기술혁신 수준관의 관계
+
+kw_list = ["Bitcoin","Ethereum","Tether","Binance","Cardano"]
+
+pytrends = TrendReq(hl='en-US', tz=360)
+
+dataset = []
+
+for x in range(1,len(kw_list)):
+     # keywords = kw_list
+     pytrends.build_payload(
+         kw_list=kw_list,
+         cat=0,
+         timeframe='2020-03-12 2020-04-12',
+         geo='', gprop='')
+     data = pytrends.interest_over_time()
+     data_queries = pytrends.related_queries()
+     data_topics = pytrends.related_topics()
+     data_region = pytrends.interest_by_region()
+
+     if not data.empty:
+          data = data.drop(labels=['isPartial'],axis='columns')
+          dataset.append(data)
+
+result = pd.concat(dataset, axis=1)
+result.to_csv('search_trends.csv')
+
+executionTime = (time.time() - startTime)
+print('Execution time in sec.: ' + str(executionTime))
+
+image = data.plot(title = 'Python V.S. R in last 3 months on Google Trends')
+fig = image.get_figure()
+fig.savefig('figure.png')
