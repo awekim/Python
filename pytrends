@@ -28,21 +28,32 @@ pytrends = TrendReq(hl="ko", tz=540)
 ################################################
 # 2. Search option settings
 ################################################
-# keyword setting (maximum 5)
-kw_list = ["COVID"] 
+### keyword setting (maximum 5)
+# If you use more than two keywords, remember that all your 
+# finding will be presented in a matrix form.
+kw_list = ["COVID","vaccine"] 
 
-# Setting categories... '0' indicates all
+### Setting categories... '0' indicates all
+# From my experience, you better use all categories.
 category_list = '0'
 
-# Setting time frame
-# You have many options: 'today 5-y', 'today 12-m', 'today 3-m', 'today 1-m'
+### Setting time frame
+# You have many options: 'today 5-y' (5 years before to the present)  
+# 'today 12-m' (12 months before to the present), 'today 3-m', 'today 1-m'
+# Here, I want to emphasize that time gap changes by your time setting. 
+# For instance, if you set your time to a "day", it will return hourly result.
+# One idea you can do is that create the loop that collects the results with more
+# densed scale in a certain period. 
 time_frame = ['2019-03-12 2021-03-12'] # 'today 5-y', 'today 12-m', 'today 3-m', 'today 1-m'
 
-# Setting country
-# One of the beauty of Google trends is that 
+### Setting country
+# One of the beauty of Google trends is that it returns the result by the region
+# according to the IP address used by the actual users. 
 geo_list = 'KR'
 
-pytrends.build_payload(kw_list,
+### Setting pytrends payload
+# This is basicaly the part where we set the pytrend searches
+pytrends.build_payload(kw_list,                 
                        cat=category_list,
                        timeframe=time_frame[0],
                        geo=geo_list,
