@@ -98,8 +98,6 @@ pytrends.build_payload(kw_list=['coronavirus'])
 
 
 #####
-# BITCOIN과 기술혁신 수준관의 관계
-
 kw_list = ["Bitcoin","Ethereum","Tether","Binance","Cardano"]
 
 pytrends = TrendReq(hl='en-US', tz=360)
